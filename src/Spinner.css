@@ -1,0 +1,10 @@
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+}
