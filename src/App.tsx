@@ -1,94 +1,106 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, useSearchParams } from 'react-router';
 import ErrorBoundary from './ErrorBoundary';
 import Search from './Search';
 import CardList from './CardList';
 import Spinner from './Spinner';
+import Pagination from './Pagination';
+import DetailedCard from './DetailedCard';
+import NotFound from './NotFound';
 import './App.css';
-import './Spinner.css';
 
-interface AppState {
-  searchTerm: string;
-  results: { name: string; description?: string }[];
-  loading: boolean;
-  error: string | null;
-  forceError: boolean;
-}
+const useSearchQuery = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const query = searchParams.get('query') || '';
+  return [query, (value: string) => setSearchParams({ query: value })] as const;
+};
 
-class App extends Component<object, AppState> {
-  constructor(props: object) {
-    super(props);
-    this.state = {
-      searchTerm: localStorage.getItem('searchTerm') || '',
-      results: [],
-      loading: false,
-      error: null,
-      forceError: false,
-    };
-  }
+const HomePage = () => {
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useSearchQuery();
+  const [results, setResults] = useState<
+    { name: string; description?: string }[]
+  >([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
-  componentDidMount() {
-    this.fetchData(this.state.searchTerm);
-  }
+  useEffect(() => {
+    fetchData(searchTerm, page);
+  }, [searchTerm, page]);
 
-  fetchData = async (query: string) => {
-    this.setState({ loading: true, error: null, forceError: false });
-
+  const fetchData = async (query: string, page: number) => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await fetch(
-        'https://pokeapi.co/api/v2/pokemon?limit=10&offset=0'
+        `https://pokeapi.co/api/v2/pokemon?limit=10&offset=${(page - 1) * 10}`
       );
       if (!response.ok) {
         throw new Error('API request failed');
       }
       const data = await response.json();
-
       const filteredResults = query
         ? data.results.filter((pokemon: { name: string }) =>
             pokemon.name.includes(query.toLowerCase())
           )
         : data.results;
-
-      this.setState({ results: filteredResults, loading: false });
+      setResults(filteredResults);
     } catch (error) {
-      this.setState({ error: (error as Error).message, loading: false });
+      setError((error as Error).message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  handleSearch = (searchTerm: string) => {
-    const trimmedSearch = searchTerm.trim();
-    localStorage.setItem('searchTerm', trimmedSearch);
-    this.setState({ searchTerm: trimmedSearch, forceError: false });
-    this.fetchData(trimmedSearch);
+  const handleSearch = (searchTerm: string) => {
+    setSearchTerm(searchTerm.trim());
+    setPage(1);
   };
 
-  forceError = () => {
-    this.setState({
-      forceError: true,
-      error: 'Manually triggered error',
-      results: [],
-    });
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    navigate(`/?query=${searchTerm}&page=${newPage}`);
   };
 
-  render() {
-    return (
-      <ErrorBoundary>
-        <div className="container">
-          <Search
-            searchTerm={this.state.searchTerm}
-            onSearch={this.handleSearch}
-          />
-          {this.state.loading && <Spinner />}
-          {this.state.error && (
-            <p className="error">Error: {this.state.error}</p>
-          )}
-          {!this.state.forceError && <CardList results={this.state.results} />}
-          <button onClick={this.forceError} className="error-button">
-            Trigger Error
-          </button>
-        </div>
-      </ErrorBoundary>
-    );
-  }
-}
+  const handleSelectItem = (name: string) => {
+    setSelectedItem(name);
+    navigate(`/?query=${searchTerm}&page=${page}&details=${name}`);
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedItem(null);
+    navigate(`/?query=${searchTerm}&page=${page}`);
+  };
+
+  return (
+    <div className="w-full grid grid-cols-2 min-h-screen">
+      <div className="col-span-1 flex flex-col justify-center items-center text-center space-y-5">
+        <Search searchTerm={searchTerm} onSearch={handleSearch} />
+        {loading && <Spinner />}
+        {error && <p className="error">Error: {error}</p>}
+        <CardList results={results} onSelect={handleSelectItem} />
+        <Pagination currentPage={page} onPageChange={handlePageChange} />
+      </div>
+      <div className="col-span-1 flex justify-center items-center">
+        {selectedItem && (
+          <DetailedCard itemName={selectedItem} onClose={handleCloseDetails} />
+        )}
+      </div>
+    </div>
+  );
+};
+
+const App = () => {
+  return (
+    <ErrorBoundary>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </ErrorBoundary>
+  );
+};
 
 export default App;

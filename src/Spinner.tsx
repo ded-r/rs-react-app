@@ -1,8 +1,7 @@
 import React from 'react';
-import './Spinner.css';
 
 const Spinner: React.FC = () => {
-  return <div className="spinner">Loading...</div>;
+  return <div className="text-white">Loading...</div>;
 };
 
 export default Spinner;

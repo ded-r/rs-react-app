@@ -1,27 +1,28 @@
-import { Component } from 'react';
+import React from 'react';
+import Card from './Card';
 
 interface CardListProps {
   results: { name: string; description?: string }[];
+  onSelect: (name: string) => void;
 }
 
-class CardList extends Component<CardListProps> {
-  render() {
-    const { results } = this.props;
-    return (
-      <div>
-        {results.length > 0 ? (
-          results.map((item, index) => (
-            <div key={index}>
-              <h3>{item.name}</h3>
-              <p>{item.description || 'No description available'}</p>
-            </div>
-          ))
-        ) : (
-          <p>No results found</p>
-        )}
-      </div>
-    );
-  }
-}
+const CardList: React.FC<CardListProps> = ({ results, onSelect }) => {
+  return (
+    <div className="space-y-4">
+      {results.length > 0 ? (
+        results.map((item, index) => (
+          <Card
+            key={index}
+            name={item.name}
+            description={item.description}
+            onClick={() => onSelect(item.name)}
+          />
+        ))
+      ) : (
+        <p>No results found</p>
+      )}
+    </div>
+  );
+};
 
 export default CardList;
