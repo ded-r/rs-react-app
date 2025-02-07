@@ -81,7 +81,7 @@ const HomePage = () => {
         {loading && <Spinner />}
         {error && <p className="error">Error: {error}</p>}
         <CardList results={results} onSelect={handleSelectItem} />
-        <Pagination currentPage={page} onPageChange={handlePageChange} />
+        <Pagination currentPage={page} totalPages={10} onPageChange={handlePageChange} />
       </div>
       <div className="col-span-1 flex justify-center items-center">
         {selectedItem && (
