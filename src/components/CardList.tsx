@@ -9,7 +9,12 @@ interface CardListProps {
   selectedItems: Array<{ name: string; url: string }>;
 }
 
-const CardList: React.FC<CardListProps> = ({ results, onSelect, onToggle, selectedItems }) => {
+const CardList: React.FC<CardListProps> = ({
+  results,
+  onSelect,
+  onToggle,
+  selectedItems,
+}) => {
   return (
     <div className="space-y-4">
       {results.length > 0 ? (
@@ -19,7 +24,9 @@ const CardList: React.FC<CardListProps> = ({ results, onSelect, onToggle, select
             name={item.name}
             url={item.url}
             onClick={() => onSelect(item.name)}
-            isSelected={selectedItems.some(selected => selected.name === item.name)}
+            isSelected={selectedItems.some(
+              (selected) => selected.name === item.name
+            )}
             onToggle={() => onToggle(item.name, item.url)}
           />
         ))

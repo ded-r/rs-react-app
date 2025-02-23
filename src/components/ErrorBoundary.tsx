@@ -1,4 +1,4 @@
-import { Component, ErrorInfo, ReactNode } from "react";
+import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -19,7 +19,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("ErrorBoundary caught an error:", error, errorInfo);
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
   }
 
   handleReset = () => {
@@ -30,9 +30,14 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     if (this.state.hasError) {
       return (
         <div className="text-center p-6 bg-red-100 border border-red-400">
-          <h2 className="text-red-500 text-xl font-bold">Something went wrong.</h2>
+          <h2 className="text-red-500 text-xl font-bold">
+            Something went wrong.
+          </h2>
           <p>Please refresh the page or try again later.</p>
-          <button onClick={this.handleReset} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md">
+          <button
+            onClick={this.handleReset}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md"
+          >
             Retry
           </button>
         </div>

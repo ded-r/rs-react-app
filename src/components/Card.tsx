@@ -9,7 +9,13 @@ interface CardProps {
   onToggle: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ name, url, onClick, isSelected, onToggle }) => {
+const Card: React.FC<CardProps> = ({
+  name,
+  url,
+  onClick,
+  isSelected,
+  onToggle,
+}) => {
   return (
     <div className="border p-4 rounded-md flex items-center space-x-4 dark:border-gray-600">
       <input

@@ -1,5 +1,4 @@
-// slices/selectedItemsSlice.ts
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface SelectedItem {
   name: string;
@@ -15,12 +14,13 @@ const initialState: SelectedItemsState = {
 };
 
 const selectedItemsSlice = createSlice({
-  name: "selectedItems",
+  name: 'selectedItems',
   initialState,
   reducers: {
     toggleItemSelection: (state, action: PayloadAction<SelectedItem>) => {
-      const index = state.items.findIndex(item => 
-        item.name === action.payload.name && item.url === action.payload.url
+      const index = state.items.findIndex(
+        (item) =>
+          item.name === action.payload.name && item.url === action.payload.url
       );
       if (index > -1) {
         state.items.splice(index, 1);
@@ -34,5 +34,6 @@ const selectedItemsSlice = createSlice({
   },
 });
 
-export const { toggleItemSelection, clearSelections } = selectedItemsSlice.actions;
+export const { toggleItemSelection, clearSelections } =
+  selectedItemsSlice.actions;
 export default selectedItemsSlice.reducer;

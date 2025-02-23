@@ -1,15 +1,15 @@
-import { useSearchParams } from "react-router";
+import { useSearchParams } from 'react-router';
 
 const useSearchQuery = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const query = searchParams.get("query") || "";
+  const query = searchParams.get('query') || '';
 
   const setSearchQuery = (value: string) => {
     const newSearchParams = new URLSearchParams(searchParams);
     if (value) {
-      newSearchParams.set("query", value);
+      newSearchParams.set('query', value);
     } else {
-      newSearchParams.delete("query");
+      newSearchParams.delete('query');
     }
     setSearchParams(newSearchParams);
   };
