@@ -29,7 +29,7 @@ const Search: React.FC<SearchProps> = ({ searchTerm, onSearch }) => {
         value={searchInput}
         onChange={handleChange}
         placeholder="Search..."
-        className="border border-gray-200 px-2"
+        className="border px-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
       />
       <button
         onClick={handleSubmit}
