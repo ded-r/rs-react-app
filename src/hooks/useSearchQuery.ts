@@ -1,20 +1,36 @@
-import { useSearchParams } from 'react-router';
+'use client'; // Mark as client component since it uses hooks
 
-const useSearchQuery = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const query = searchParams.get('query') || '';
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+
+const useSearchQuery = (initialSearchTerm: string) => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams?.get('query') || initialSearchTerm
+  );
+
+  // Sync state with URL changes
+  useEffect(() => {
+    const currentQuery = searchParams?.get('query') || initialSearchTerm;
+    if (currentQuery !== searchTerm) {
+      setSearchTerm(currentQuery);
+    }
+  }, [searchParams, initialSearchTerm]);
 
   const setSearchQuery = (value: string) => {
-    const newSearchParams = new URLSearchParams(searchParams);
+    const newSearchParams = new URLSearchParams(searchParams?.toString());
     if (value) {
       newSearchParams.set('query', value);
     } else {
       newSearchParams.delete('query');
     }
-    setSearchParams(newSearchParams);
+    // Update URL without full page reload
+    router.push(`/?${newSearchParams.toString()}`, { scroll: false });
+    setSearchTerm(value);
   };
 
-  return [query, setSearchQuery] as const;
+  return [searchTerm, setSearchQuery] as const;
 };
 
 export default useSearchQuery;
